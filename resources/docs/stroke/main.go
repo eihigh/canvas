@@ -4,8 +4,8 @@ import (
 	"image/color"
 	"math"
 
-	"github.com/tdewolff/canvas"
-	"github.com/tdewolff/canvas/renderers"
+	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/renderers"
 )
 
 var fontFamily *canvas.FontFamily

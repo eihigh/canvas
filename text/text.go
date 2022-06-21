@@ -1,6 +1,6 @@
 package text
 
-import "github.com/tdewolff/canvas/font"
+import "github.com/eihigh/canvas/font"
 
 // Glyph is a shaped glyph for the given font and font size. It specified the glyph ID, the cluster ID, its X and Y advance and offset in font units, and its representation as text.
 type Glyph struct {

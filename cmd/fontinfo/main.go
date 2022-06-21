@@ -13,8 +13,8 @@ import (
 	"path/filepath"
 
 	"github.com/tdewolff/argp"
-	"github.com/tdewolff/canvas"
-	"github.com/tdewolff/canvas/font"
+	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/font"
 	"golang.org/x/image/draw"
 	"golang.org/x/image/tiff"
 	"golang.org/x/image/vector"

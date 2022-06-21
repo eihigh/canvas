@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	canvasText "github.com/tdewolff/canvas/text"
+	canvasText "github.com/eihigh/canvas/text"
 )
 
 // TextAlign specifies how the text should align or whether it should be justified.

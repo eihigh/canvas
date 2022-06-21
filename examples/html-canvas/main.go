@@ -10,9 +10,9 @@ import (
 	"image/color"
 	"syscall/js"
 
-	"github.com/tdewolff/canvas"
-	"github.com/tdewolff/canvas/renderers/htmlcanvas"
-	"github.com/tdewolff/canvas/text"
+	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/renderers/htmlcanvas"
+	"github.com/eihigh/canvas/text"
 )
 
 var fontLatin *canvas.FontFamily

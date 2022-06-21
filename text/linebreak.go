@@ -6,7 +6,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/tdewolff/canvas/font"
+	"github.com/eihigh/canvas/font"
 )
 
 // See: Donald E. Knuth and Michael F. Plass, "Breaking Paragraphs into Lines", 1981

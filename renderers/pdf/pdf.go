@@ -7,7 +7,7 @@ import (
 	"io"
 	"math"
 
-	"github.com/tdewolff/canvas"
+	"github.com/eihigh/canvas"
 )
 
 type Options struct {

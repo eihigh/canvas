@@ -14,9 +14,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tdewolff/canvas"
-	canvasFont "github.com/tdewolff/canvas/font"
-	canvasText "github.com/tdewolff/canvas/text"
+	"github.com/eihigh/canvas"
+	canvasFont "github.com/eihigh/canvas/font"
+	canvasText "github.com/eihigh/canvas/text"
 )
 
 // TODO: Invalid graphics transparency, Group has a transparency S entry or the S entry is null
@@ -482,7 +482,7 @@ func (w *pdfWriter) Close() error {
 
 	// metadata
 	info := pdfDict{
-		"Producer":     "tdewolff/canvas",
+		"Producer":     "eihigh/canvas",
 		"CreationDate": time.Now().Format("D:20060102150405Z0700"),
 	}
 	if w.title != "" {

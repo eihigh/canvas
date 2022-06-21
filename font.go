@@ -7,9 +7,9 @@ import (
 	"math"
 	"reflect"
 
-	"github.com/adrg/sysfont"
-	"github.com/tdewolff/canvas/font"
-	"github.com/tdewolff/canvas/text"
+	"github.com/eihigh/canvas/font"
+	"github.com/eihigh/canvas/text"
+	"github.com/flopp/go-findfont"
 )
 
 // FontStyle defines the font style to be used for the font. It specifies a boldness with optionally italic, e.g. FontBlack | FontItalic will specify a black boldness (a font-weight of 800 in CSS) and italic.
@@ -108,13 +108,9 @@ func (subsetter *FontSubsetter) List() []uint16 {
 ////////////////////////////////////////////////////////////////
 
 // FindLocalFont finds the path to a font from the system's fonts.
-func FindLocalFont(name string, style FontStyle) string {
+func FindLocalFont(name string, style FontStyle) (string, error) {
 	// TODO: use style to match font
-	finder := sysfont.NewFinder(&sysfont.FinderOpts{
-		Extensions: []string{".ttf", ".otf", ".ttc", ".woff", ".woff2", ".eot"},
-	})
-	font := finder.Match(name)
-	return font.Filename
+	return findfont.Find(name)
 }
 
 // Font defines an SFNT font such as TTF or OTF.
@@ -129,7 +125,11 @@ type Font struct {
 
 // LoadLocalFont loads a font from the system's fonts.
 func LoadLocalFont(name string, style FontStyle) (*Font, error) {
-	return LoadFontFile(FindLocalFont(name, style), style)
+	file, err := FindLocalFont(name, style)
+	if err != nil {
+		return nil, err
+	}
+	return LoadFontFile(file, style)
 }
 
 // LoadFontFile loads a font from a file.
@@ -272,7 +272,11 @@ func (family *FontFamily) SetFeatures(features string) {
 
 // LoadLocalFont loads a font from the system's fonts.
 func (family *FontFamily) LoadLocalFont(name string, style FontStyle) error {
-	return family.LoadFontFile(FindLocalFont(name, style), style)
+	file, err := FindLocalFont(name, style)
+	if err != nil {
+		return err
+	}
+	return family.LoadFontFile(file, style)
 }
 
 // MustLoadLocalFont loads a font from the system's fonts and panics on error.

@@ -9,8 +9,8 @@ import (
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmapi"
 	"github.com/paulmach/osm/osmgeojson"
-	"github.com/tdewolff/canvas"
-	"github.com/tdewolff/canvas/renderers"
+	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/renderers"
 )
 
 var dejaVuSerif *canvas.FontFamily

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tdewolff/canvas"
+	"github.com/eihigh/canvas"
 	"github.com/tdewolff/minify/v2"
 )
 
@@ -61,7 +61,7 @@ func New(w io.Writer, width, height float64, opts *Options) *PS {
 	} else if opts.Format == EncapsulatedPostScript {
 		fmt.Fprintf(w, "%%!PS-Adobe-3.0 EPSF-3.0\n")
 	}
-	fmt.Fprintf(w, "%%%%Creator: tdewolff/canvas\n")
+	fmt.Fprintf(w, "%%%%Creator: eihigh/canvas\n")
 	fmt.Fprintf(w, "%%%%CreationDate: %v\n", time.Now().Format(time.ANSIC))
 	fmt.Fprintf(w, "%%%%BoundingBox: 0 0 %v %v\n", dec(width), dec(height))
 

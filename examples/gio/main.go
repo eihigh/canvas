@@ -10,9 +10,9 @@ import (
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
-	"github.com/tdewolff/canvas"
-	"github.com/tdewolff/canvas/renderers/gio"
-	"github.com/tdewolff/canvas/text"
+	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/renderers/gio"
+	"github.com/eihigh/canvas/text"
 )
 
 var fontLatin *canvas.FontFamily

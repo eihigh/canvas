@@ -7,9 +7,9 @@ import (
 	"image/color"
 	"os"
 
-	"github.com/tdewolff/canvas"
-	"github.com/tdewolff/canvas/renderers"
-	"github.com/tdewolff/canvas/text"
+	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/renderers"
+	"github.com/eihigh/canvas/text"
 )
 
 var fontLatin *canvas.FontFamily
