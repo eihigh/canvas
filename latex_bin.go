@@ -1,5 +1,3 @@
-// +build latex
-
 package canvas
 
 // TODO: make LaTeX work for WASM target?

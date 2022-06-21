@@ -1,19 +1,14 @@
+//go:build !fribidi || js
 // +build !fribidi js
 
 package text
 
-import "github.com/benoitkugler/textprocessing/fribidi"
-
-// Bidi maps the string from its logical order to the visual order to correctly display mixed LTR/RTL text. It returns a mapping of rune positions.
+// Bidi is not supported.
 func Bidi(text string) (string, []int) {
-	str := []rune(text)
-	pbase := fribidi.CharType(fribidi.ON)
-	vis, _ := fribidi.LogicalToVisual(fribidi.DefaultFlags, str, &pbase)
-	text = string(vis.Str)
-
-	mapV2L := make([]int, len(vis.VisualToLogical))
-	for i, pos := range vis.VisualToLogical {
-		mapV2L[i] = int(pos)
+	runes := []rune(text)
+	mapV2L := make([]int, len(runes))
+	for i := range mapV2L {
+		mapV2L[i] = i
 	}
 	return text, mapV2L
 }

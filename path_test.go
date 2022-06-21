@@ -3,15 +3,10 @@ package canvas
 import (
 	"fmt"
 	"math"
-	"os"
 	"strings"
 	"testing"
 
 	"github.com/tdewolff/test"
-	"gonum.org/v1/plot"
-	"gonum.org/v1/plot/plotter"
-	"gonum.org/v1/plot/vg"
-	"gonum.org/v1/plot/vg/draw"
 )
 
 func TestPathEmpty(t *testing.T) {
@@ -813,100 +808,4 @@ func TestPathToPDF(t *testing.T) {
 			test.T(t, MustParseSVG(tt.orig).ToPDF(), tt.ps)
 		})
 	}
-}
-
-func plotPathLengthParametrization(filename string, N int, speed, length func(float64) float64, tmin, tmax float64) {
-	Tc, totalLength := invSpeedPolynomialChebyshevApprox(N, gaussLegendre7, speed, tmin, tmax)
-
-	n := 100
-	realData := make(plotter.XYs, n+1)
-	modelData := make(plotter.XYs, n+1)
-	for i := 0; i < n+1; i++ {
-		t := tmin + (tmax-tmin)*float64(i)/float64(n)
-		l := totalLength * float64(i) / float64(n)
-		realData[i].X = length(t)
-		realData[i].Y = t
-		modelData[i].X = l
-		modelData[i].Y = Tc(l)
-	}
-
-	scatter, err := plotter.NewScatter(realData)
-	if err != nil {
-		panic(err)
-	}
-	scatter.Shape = draw.CircleGlyph{}
-
-	line, err := plotter.NewLine(modelData)
-	if err != nil {
-		panic(err)
-	}
-	line.LineStyle.Color = Red
-	line.LineStyle.Width = 2.0
-
-	p := plot.New()
-	p.X.Label.Text = "L"
-	p.Y.Label.Text = "t"
-	p.Add(scatter, line)
-
-	p.Legend.Add("real", scatter)
-	p.Legend.Add(fmt.Sprintf("Chebyshev N=%v", N), line)
-
-	if err := p.Save(7*vg.Inch, 4*vg.Inch, filename); err != nil {
-		panic(err)
-	}
-}
-
-func TestPathLengthParametrization(t *testing.T) {
-	if !testing.Verbose() {
-		t.SkipNow()
-		return
-	}
-	_ = os.Mkdir("test", 0755)
-
-	start := Point{0.0, 0.0}
-	cp := Point{1000.0, 0.0}
-	end := Point{10.0, 10.0}
-	speed := func(t float64) float64 {
-		return quadraticBezierDeriv(start, cp, end, t).Length()
-	}
-	length := func(t float64) float64 {
-		p0, p1, p2, _, _, _ := quadraticBezierSplit(start, cp, end, t)
-		return quadraticBezierLength(p0, p1, p2)
-	}
-	plotPathLengthParametrization("test/len_param_quad.png", 20, speed, length, 0.0, 1.0)
-
-	plotCube := func(name string, start, cp1, cp2, end Point) {
-		N := 20 + 20*cubicBezierNumInflections(start, cp1, cp2, end)
-		speed := func(t float64) float64 {
-			return cubicBezierDeriv(start, cp1, cp2, end, t).Length()
-		}
-		length := func(t float64) float64 {
-			p0, p1, p2, p3, _, _, _, _ := cubicBezierSplit(start, cp1, cp2, end, t)
-			return cubicBezierLength(p0, p1, p2, p3)
-		}
-		plotPathLengthParametrization(name, N, speed, length, 0.0, 1.0)
-	}
-
-	plotCube("test/len_param_cube.png", Point{0.0, 0.0}, Point{10.0, 0.0}, Point{10.0, 2.0}, Point{8.0, 2.0})
-
-	// see "Analysis of Inflection Points for Planar Cubic Bezier Curve" by Z.Zhang et al. from 2009
-	// https://cie.nwsuaf.edu.cn/docs/20170614173651207557.pdf
-	plotCube("test/len_param_cube1.png", Point{16, 467}, Point{185, 95}, Point{673, 545}, Point{810, 17})
-	plotCube("test/len_param_cube2.png", Point{859, 676}, Point{13, 422}, Point{781, 12}, Point{266, 425})
-	plotCube("test/len_param_cube3.png", Point{872, 686}, Point{11, 423}, Point{779, 13}, Point{220, 376})
-	plotCube("test/len_param_cube4.png", Point{819, 566}, Point{43, 18}, Point{826, 18}, Point{25, 533})
-	plotCube("test/len_param_cube5.png", Point{884, 574}, Point{135, 14}, Point{678, 14}, Point{14, 566})
-
-	rx, ry := 10000.0, 10.0
-	phi := 0.0
-	sweep := false
-	end = Point{-100.0, 10.0}
-	theta1, theta2 := 0.0, 0.5*math.Pi
-	speed = func(theta float64) float64 {
-		return ellipseDeriv(rx, ry, phi, sweep, theta).Length()
-	}
-	length = func(theta float64) float64 {
-		return ellipseLength(rx, ry, theta1, theta)
-	}
-	plotPathLengthParametrization("test/len_param_ellipse.png", 20, speed, length, theta1, theta2)
 }
