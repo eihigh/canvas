@@ -4,6 +4,7 @@ import (
 	"image"
 	"testing"
 
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/tdewolff/test"
 )
 
@@ -27,7 +28,7 @@ func TestCanvas(t *testing.T) {
 	path := MustParseSVG("M10 0L20 0Q25 10 30 0C30 10 40 10 40 0A5 5 0 0 0 50 0z")
 
 	family := NewFontFamily("dejavu-serif")
-	if err := family.LoadFontFile("resources/DejaVuSerif.ttf", FontRegular); err != nil {
+	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
 	face := family.Face(10.0, Green, FontItalic|FontBold, FontNormal)
@@ -41,6 +42,7 @@ func TestCanvas(t *testing.T) {
 
 	c := New(100, 100)
 	ctx := NewContext(c)
+	ctx.SetCoordSystem(CartesianI)
 	ctx.SetView(Identity.Rotate(90).Scale(2.0, 1.0))
 	ctx.SetFillColor(Red)
 	ctx.SetStrokeColor(Gray)

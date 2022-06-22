@@ -1,15 +1,15 @@
 package font
 
 import (
-	"io/ioutil"
 	"testing"
 
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/tdewolff/test"
 	"golang.org/x/image/font/sfnt"
 )
 
 func TestParseTTF(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/DejaVuSerif.ttf")
+	b, err := resources.FS.ReadFile("DejaVuSerif.ttf")
 	test.Error(t, err)
 
 	sfnt, err := ParseFont(b, 0)
@@ -18,7 +18,7 @@ func TestParseTTF(t *testing.T) {
 }
 
 func TestParseOTF(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/EBGaramond12-Regular.otf")
+	b, err := resources.FS.ReadFile("EBGaramond12-Regular.otf")
 	test.Error(t, err)
 
 	sfnt, err := ParseFont(b, 0)
@@ -27,7 +27,7 @@ func TestParseOTF(t *testing.T) {
 }
 
 //func TestParseOTF_CFF2(t *testing.T) {
-//	b, err := ioutil.ReadFile("../resources/AdobeVFPrototype.otf") // TODO: CFF2
+//	b, err := resources.FS.ReadFile("AdobeVFPrototype.otf") // TODO: CFF2
 //	test.Error(t, err)
 //
 //	sfnt, err := ParseFont(b, 0)
@@ -36,7 +36,7 @@ func TestParseOTF(t *testing.T) {
 //}
 
 func TestParseWOFF(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/DejaVuSerif.woff")
+	b, err := resources.FS.ReadFile("DejaVuSerif.woff")
 	test.Error(t, err)
 
 	sfnt, err := ParseFont(b, 0)
@@ -45,7 +45,7 @@ func TestParseWOFF(t *testing.T) {
 }
 
 func TestParseWOFF2(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/DejaVuSerif.woff2")
+	b, err := resources.FS.ReadFile("DejaVuSerif.woff2")
 	test.Error(t, err)
 
 	sfnt, err := ParseFont(b, 0)
@@ -54,7 +54,7 @@ func TestParseWOFF2(t *testing.T) {
 }
 
 func TestParseEOT(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/DejaVuSerif.eot")
+	b, err := resources.FS.ReadFile("DejaVuSerif.eot")
 	test.Error(t, err)
 
 	sfnt, err := ParseFont(b, 0)
@@ -63,7 +63,7 @@ func TestParseEOT(t *testing.T) {
 }
 
 func TestFromGoSFNT(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/DejaVuSerif.ttf")
+	b, err := resources.FS.ReadFile("DejaVuSerif.ttf")
 	test.Error(t, err)
 
 	font, err := sfnt.Parse(b)

@@ -1,14 +1,14 @@
 package font
 
 import (
-	"io/ioutil"
 	"testing"
 
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/tdewolff/test"
 )
 
 func TestSFNTDejaVuSerifTTF(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/DejaVuSerif.ttf")
+	b, err := resources.FS.ReadFile("DejaVuSerif.ttf")
 	test.Error(t, err)
 
 	sfnt, err := ParseSFNT(b, 0)
@@ -31,7 +31,7 @@ func TestSFNTDejaVuSerifTTF(t *testing.T) {
 }
 
 func TestSFNTWrite(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/DejaVuSerif.ttf")
+	b, err := resources.FS.ReadFile("DejaVuSerif.ttf")
 	test.Error(t, err)
 
 	sfnt, err := ParseSFNT(b, 0)
@@ -49,7 +49,7 @@ func TestSFNTWrite(t *testing.T) {
 }
 
 func TestSFNTSubset(t *testing.T) {
-	b, err := ioutil.ReadFile("../resources/DejaVuSerif.ttf")
+	b, err := resources.FS.ReadFile("DejaVuSerif.ttf")
 	test.Error(t, err)
 
 	sfnt, err := ParseSFNT(b, 0)

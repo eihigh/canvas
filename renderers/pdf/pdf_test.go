@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/tdewolff/test"
 )
 
@@ -61,8 +62,6 @@ func TestPDFPath(t *testing.T) {
 	test.String(t, pdf.String(), " 2.8346457 0 0 2.8346457 0 0 cm /A0 gs 1 0 0 rg /A1 gs 0 0 1 RG 5 w 1 J 1 j [1 2 3 1 2 3] 2 d")
 }
 
-const fontDir = "../../resources/"
-
 func TestPDFText(t *testing.T) {
 	doTestPDFText(t, false, 506000, "TestPDFText_no_subset.pdf")
 	doTestPDFText(t, true, 330000, "TestPDFText_subset_fonts.pdf")
@@ -70,11 +69,11 @@ func TestPDFText(t *testing.T) {
 
 func doTestPDFText(t *testing.T, subsetFonts bool, expectedSize int, filename string) {
 	dejaVuSerif := canvas.NewFontFamily("dejavu-serif")
-	err := dejaVuSerif.LoadFontFile(fontDir+"DejaVuSerif.ttf", canvas.FontRegular)
+	err := dejaVuSerif.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", canvas.FontRegular)
 	test.Error(t, err)
 
 	ebGaramond := canvas.NewFontFamily("eb-garamond")
-	err = ebGaramond.LoadFontFile(fontDir+"EBGaramond12-Regular.otf", canvas.FontRegular)
+	err = ebGaramond.LoadFontFileFS(resources.FS, "EBGaramond12-Regular.otf", canvas.FontRegular)
 	test.Error(t, err)
 
 	dejaVu8 := dejaVuSerif.Face(8, canvas.Black, canvas.FontRegular, canvas.FontNormal)

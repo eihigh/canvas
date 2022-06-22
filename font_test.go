@@ -3,12 +3,13 @@ package canvas
 import (
 	"testing"
 
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/tdewolff/test"
 )
 
 func TestFontFamily(t *testing.T) {
 	family := NewFontFamily("dejavu-serif")
-	if err := family.LoadFontFile("resources/DejaVuSerif.ttf", FontRegular); err != nil {
+	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
 
@@ -30,7 +31,7 @@ func TestFontFamily(t *testing.T) {
 
 func TestFontFace(t *testing.T) {
 	family := NewFontFamily("dejavu-serif")
-	if err := family.LoadFontFile("resources/DejaVuSerif.ttf", FontRegular); err != nil {
+	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
 	pt := ptPerMm * float64(family.fonts[FontRegular].Head.UnitsPerEm)
@@ -56,7 +57,7 @@ func TestFontFace(t *testing.T) {
 
 func TestFontDecoration(t *testing.T) {
 	family := NewFontFamily("dejavu-serif")
-	if err := family.LoadFontFile("resources/DejaVuSerif.ttf", FontRegular); err != nil {
+	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
 	pt := ptPerMm * float64(family.fonts[FontRegular].Head.UnitsPerEm)
