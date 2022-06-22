@@ -2,9 +2,9 @@ package main
 
 import (
 	"image/png"
-	"os"
 
 	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/eihigh/canvas/renderers"
 )
 
@@ -12,7 +12,7 @@ var fontFamily *canvas.FontFamily
 
 func main() {
 	fontFamily = canvas.NewFontFamily("times")
-	if err := fontFamily.LoadLocalFont("NimbusRoman-Regular", canvas.FontRegular); err != nil {
+	if err := fontFamily.LoadFontFileFS(resources.FS, "NimbusRomNo9L-Reg.otf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 
@@ -49,7 +49,7 @@ func draw(c *canvas.Context) {
 	drawText(c, 30.0, canvas.NewTextBox(headerFace, "Document Example", 0.0, 0.0, canvas.Left, canvas.Top, 0.0, 0.0))
 	drawText(c, 30.0, canvas.NewTextBox(textFace, lorem[0], 140.0, 0.0, canvas.Justify, canvas.Top, 5.0, 0.0))
 
-	lenna, err := os.Open("../../resources/lenna.png")
+	lenna, err := resources.FS.Open("lenna.png")
 	if err != nil {
 		panic(err)
 	}

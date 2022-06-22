@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/eihigh/canvas/renderers/pdf"
 	"github.com/eihigh/canvas/text"
 )
@@ -21,12 +22,12 @@ var fontArabic *canvas.FontFamily
 func main() {
 	t0 := time.Now()
 	fontLatin = canvas.NewFontFamily("DejaVu Serif")
-	if err := fontLatin.LoadLocalFont("DejaVuSerif", canvas.FontRegular); err != nil {
+	if err := fontLatin.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 
 	fontArabic = canvas.NewFontFamily("DejaVu Sans")
-	if err := fontArabic.LoadLocalFont("DejaVuSans", canvas.FontRegular); err != nil {
+	if err := fontArabic.LoadFontFileFS(resources.FS, "DejaVuSans.ttf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 
@@ -81,7 +82,7 @@ var lorem = []string{
 	`Ut porttitor leo a diam sollicitudin. Faucibus purus in massa tempor. Ante in nibh mauris cursus mattis molestie. In tellus integer feugiat scelerisque varius morbi. Viverra justo nec ultrices dui sapien eget mi proin. Adipiscing elit pellentesque habitant morbi tristique senectus. Nulla posuere sollicitudin aliquam ultrices sagittis orci a. Fames ac turpis egestas sed tempus urna et pharetra pharetra. Nascetur ridiculus mus mauris vitae. Feugiat nisl pretium fusce id velit. Mollis nunc sed id semper risus. Dictum fusce ut placerat orci nulla. Sit amet nulla facilisi morbi tempus iaculis. Iaculis at erat pellentesque adipiscing commodo elit at imperdiet dui. Non quam lacus suspendisse faucibus interdum posuere lorem ipsum. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Pretium fusce id velit ut tortor pretium viverra suspendisse. Metus vulputate eu scelerisque felis imperdiet proin fermentum leo.`,
 }
 
-const lenna = "../../resources/lenna.png"
+const lenna = "lenna.png"
 
 var y = 290.0
 
@@ -100,7 +101,7 @@ func drawDocument(c *canvas.Context) {
 	text10Face := fontLatin.Face(10.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
 	boldFace := fontLatin.Face(12.0, canvas.Black, canvas.FontBold, canvas.FontNormal)
 
-	logo, err := os.Open(lenna)
+	logo, err := resources.FS.Open(lenna)
 	if err != nil {
 		panic(err)
 	}
@@ -212,7 +213,7 @@ func richDraw(c *canvas.Context) {
 
 	y -= 20
 	// Draw a raster image
-	logo, err := os.Open(lenna)
+	logo, err := resources.FS.Open(lenna)
 	if err != nil {
 		panic(err)
 	}

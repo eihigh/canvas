@@ -33,3 +33,4 @@ renderers/pdf/reader*
 renderers/nvpath
 examples/nvpath
 cmd/pdftext
+!/internal/resources/*

@@ -3,13 +3,14 @@ package canvas
 import (
 	"fmt"
 	"image/color"
+	"io"
+	"io/fs"
 	"io/ioutil"
 	"math"
 	"reflect"
 
 	"github.com/eihigh/canvas/font"
 	"github.com/eihigh/canvas/text"
-	"github.com/flopp/go-findfont"
 )
 
 // FontStyle defines the font style to be used for the font. It specifies a boldness with optionally italic, e.g. FontBlack | FontItalic will specify a black boldness (a font-weight of 800 in CSS) and italic.
@@ -107,12 +108,6 @@ func (subsetter *FontSubsetter) List() []uint16 {
 
 ////////////////////////////////////////////////////////////////
 
-// FindLocalFont finds the path to a font from the system's fonts.
-func FindLocalFont(name string, style FontStyle) (string, error) {
-	// TODO: use style to match font
-	return findfont.Find(name)
-}
-
 // Font defines an SFNT font such as TTF or OTF.
 type Font struct {
 	*font.SFNT
@@ -144,6 +139,34 @@ func LoadFontFile(filename string, style FontStyle) (*Font, error) {
 // LoadFontCollection loads a font from a collection file and uses the font at the specified index.
 func LoadFontCollection(filename string, index int, style FontStyle) (*Font, error) {
 	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load font file '%s': %w", filename, err)
+	}
+	return LoadFont(b, index, style)
+}
+
+// LoadFontFileFS loads a font from a file in the fsys.
+func LoadFontFileFS(fsys fs.FS, filename string, style FontStyle) (*Font, error) {
+	f, err := fsys.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load font file '%s': %w", filename, err)
+	}
+	defer f.Close()
+	b, err := io.ReadAll(f)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load font file '%s': %w", filename, err)
+	}
+	return LoadFont(b, 0, style)
+}
+
+// LoadFontCollectionFS loads a font from a collection file and uses the font at the specified index.
+func LoadFontCollectionFS(fsys fs.FS, filename string, index int, style FontStyle) (*Font, error) {
+	f, err := fsys.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load font file '%s': %w", filename, err)
+	}
+	defer f.Close()
+	b, err := io.ReadAll(f)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load font file '%s': %w", filename, err)
 	}
@@ -314,6 +337,48 @@ func (family *FontFamily) LoadFontCollection(filename string, index int, style F
 // MustLoadFontFile loads a font from a filea and panics on error.
 func (family *FontFamily) MustLoadFontCollection(filename string, index int, style FontStyle) {
 	if err := family.LoadFontCollection(filename, index, style); err != nil {
+		panic(err)
+	}
+}
+
+// LoadFontFileFS loads a font from a file in the fsys.
+func (family *FontFamily) LoadFontFileFS(fsys fs.FS, filename string, style FontStyle) error {
+	f, err := fsys.Open(filename)
+	if err != nil {
+		return fmt.Errorf("failed to load font file '%s': %w", filename, err)
+	}
+	defer f.Close()
+	b, err := io.ReadAll(f)
+	if err != nil {
+		return fmt.Errorf("failed to load font file '%s': %w", filename, err)
+	}
+	return family.LoadFont(b, 0, style)
+}
+
+// MustLoadFontFileFS loads a font from a filea and panics on error.
+func (family *FontFamily) MustLoadFontFileFS(fsys fs.FS, filename string, style FontStyle) {
+	if err := family.LoadFontFileFS(fsys, filename, style); err != nil {
+		panic(err)
+	}
+}
+
+// LoadFontCollectionFS loads a font from a collection file and uses the font at the specified index.
+func (family *FontFamily) LoadFontCollectionFS(fsys fs.FS, filename string, index int, style FontStyle) error {
+	f, err := fsys.Open(filename)
+	if err != nil {
+		return fmt.Errorf("failed to load font file '%s': %w", filename, err)
+	}
+	defer f.Close()
+	b, err := io.ReadAll(f)
+	if err != nil {
+		return fmt.Errorf("failed to load font file '%s': %w", filename, err)
+	}
+	return family.LoadFont(b, index, style)
+}
+
+// MustLoadFontCollectionFS loads a font from a filea and panics on error.
+func (family *FontFamily) MustLoadFontCollectionFS(fsys fs.FS, filename string, index int, style FontStyle) {
+	if err := family.LoadFontCollectionFS(fsys, filename, index, style); err != nil {
 		panic(err)
 	}
 }

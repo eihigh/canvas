@@ -1,9 +1,6 @@
 //go:build js
-// +build js
 
 package main
-
-//go:generate go-bindata -o files.go ../../font/DejaVuSerif.ttf ../lenna.png ../../test/lenna.png
 
 import (
 	"bytes"
@@ -12,6 +9,7 @@ import (
 	"syscall/js"
 
 	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/eihigh/canvas/renderers/htmlcanvas"
 	"github.com/eihigh/canvas/text"
 )
@@ -21,22 +19,18 @@ var fontArabic *canvas.FontFamily
 var fontDevanagari *canvas.FontFamily
 
 func main() {
-	dejaVuSerif := MustAsset("DejaVuSerif.ttf")
-	dejaVuSans := MustAsset("DejaVuSans.ttf")
-	notoSerif := MustAsset("NotoSerifDevanagari-Regular.ttf")
-
 	fontLatin = canvas.NewFontFamily("DejaVu Serif")
-	if err := fontLatin.LoadFont(dejaVuSerif, 0, canvas.FontRegular); err != nil {
+	if err := fontLatin.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 
 	fontArabic = canvas.NewFontFamily("DejaVu Sans")
-	if err := fontArabic.LoadFont(dejaVuSans, 0, canvas.FontRegular); err != nil {
+	if err := fontArabic.LoadFontFileFS(resources.FS, "DejaVuSans.ttf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 
 	fontDevanagari = canvas.NewFontFamily("Noto Serif")
-	if err := fontDevanagari.LoadFont(notoSerif, 0, canvas.FontRegular); err != nil {
+	if err := fontDevanagari.LoadFontFileFS(resources.FS, "NotoSerifDevanagari.ttf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 
@@ -133,11 +127,11 @@ func draw(c *canvas.Context) {
 	c.DrawPath(135, 85, latex)
 
 	// Draw a raster image
-	lenna := bytes.NewBuffer(MustAsset("lenna.png"))
+	lenna, err := resources.FS.ReadFile("lenna.png")
 	if err != nil {
 		panic(err)
 	}
-	img, err := canvas.NewPNGImage(lenna)
+	img, err := canvas.NewPNGImage(bytes.NewBuffer(lenna))
 	if err != nil {
 		panic(err)
 	}
