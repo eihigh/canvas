@@ -2,10 +2,10 @@ name: Go
 on:
   push:
     branches:
-      - master
+      - ebiten
   pull_request:
     branches:
-      - master
+      - ebiten
 jobs:
   build:
     runs-on: ubuntu-latest
