@@ -6,6 +6,7 @@ import (
 	"image/color"
 
 	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/eihigh/canvas/renderers"
 	"github.com/paulmach/orb"
 	"github.com/paulmach/osm"
@@ -17,7 +18,7 @@ var dejaVuSerif *canvas.FontFamily
 
 func main() {
 	dejaVuSerif = canvas.NewFontFamily("dejavu-serif")
-	if err := dejaVuSerif.LoadLocalFont("DejaVuSerif", canvas.FontRegular); err != nil {
+	if err := dejaVuSerif.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 

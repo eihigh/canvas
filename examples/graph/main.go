@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/eihigh/canvas/renderers"
 )
 
@@ -17,7 +18,7 @@ var fontFamily *canvas.FontFamily
 
 func main() {
 	fontFamily = canvas.NewFontFamily("times")
-	if err := fontFamily.LoadLocalFont("NimbusRoman-Regular", canvas.FontRegular); err != nil {
+	if err := fontFamily.LoadFontFileFS(resources.FS, "NimbusRomNo9L-Reg.otf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 

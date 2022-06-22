@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/eihigh/canvas/renderers"
 )
 
@@ -9,12 +10,13 @@ var fontFamily *canvas.FontFamily
 
 func main() {
 	fontFamily = canvas.NewFontFamily("times")
-	if err := fontFamily.LoadLocalFont("Liberation Serif", canvas.FontRegular); err != nil {
+	if err := fontFamily.LoadFontFileFS(resources.FS, "LiberationSerif-Regular.ttf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 
 	c := canvas.New(160, 80)
 	ctx := canvas.NewContext(c)
+	ctx.SetCoordSystem(canvas.CartesianI)
 	ctx.SetFillColor(canvas.White)
 	ctx.DrawPath(0, 0, canvas.Rectangle(c.W, c.H))
 	draw(ctx)

@@ -11,6 +11,7 @@ func main() {
 
 	// Create a canvas context used to keep drawing state
 	ctx := canvas.NewContext(c)
+	ctx.SetCoordSystem(canvas.CartesianI)
 
 	// Create a triangle path from an SVG path and draw it to the canvas
 	triangle, err := canvas.ParseSVG("L60 0L30 60z")

@@ -4,6 +4,7 @@ import (
 	"image/color"
 
 	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/internal/resources"
 	"github.com/eihigh/canvas/renderers"
 )
 
@@ -11,12 +12,13 @@ var font *canvas.FontFamily
 
 func main() {
 	font = canvas.NewFontFamily("font")
-	if err := font.LoadFontFile("../Dynalight-Regular.otf", canvas.FontRegular); err != nil {
+	if err := font.LoadFontFileFS(resources.FS, "Dynalight-Regular.otf", canvas.FontRegular); err != nil {
 		panic(err)
 	}
 
 	c := canvas.New(65, 27)
 	ctx := canvas.NewContext(c)
+	ctx.SetCoordSystem(canvas.CartesianI)
 	draw(ctx)
 	c.WriteFile("title.png", renderers.PNG(canvas.DPMM(5.0)))
 }
