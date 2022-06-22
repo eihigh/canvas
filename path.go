@@ -1795,18 +1795,17 @@ func (p *Path) ToRasterizer(ras *vector.Rasterizer, resolution Resolution) {
 	p = p.ReplaceArcs()
 
 	dpmm := resolution.DPMM()
-	dy := float64(ras.Bounds().Size().Y)
 	for i := 0; i < len(p.d); {
 		cmd := p.d[i]
 		switch cmd {
 		case MoveToCmd:
-			ras.MoveTo(float32(p.d[i+1]*dpmm), float32(dy-p.d[i+2]*dpmm))
+			ras.MoveTo(float32(p.d[i+1]*dpmm), float32(p.d[i+2]*dpmm))
 		case LineToCmd:
-			ras.LineTo(float32(p.d[i+1]*dpmm), float32(dy-p.d[i+2]*dpmm))
+			ras.LineTo(float32(p.d[i+1]*dpmm), float32(p.d[i+2]*dpmm))
 		case QuadToCmd:
-			ras.QuadTo(float32(p.d[i+1]*dpmm), float32(dy-p.d[i+2]*dpmm), float32(p.d[i+3]*dpmm), float32(dy-p.d[i+4]*dpmm))
+			ras.QuadTo(float32(p.d[i+1]*dpmm), float32(p.d[i+2]*dpmm), float32(p.d[i+3]*dpmm), float32(p.d[i+4]*dpmm))
 		case CubeToCmd:
-			ras.CubeTo(float32(p.d[i+1]*dpmm), float32(dy-p.d[i+2]*dpmm), float32(p.d[i+3]*dpmm), float32(dy-p.d[i+4]*dpmm), float32(p.d[i+5]*dpmm), float32(dy-p.d[i+6]*dpmm))
+			ras.CubeTo(float32(p.d[i+1]*dpmm), float32(p.d[i+2]*dpmm), float32(p.d[i+3]*dpmm), float32(p.d[i+4]*dpmm), float32(p.d[i+5]*dpmm), float32(p.d[i+6]*dpmm))
 		case ArcToCmd:
 			panic("arcs should have been replaced")
 		case CloseCmd:

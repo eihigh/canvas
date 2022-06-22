@@ -31,12 +31,12 @@ var lorem = []string{
 	//` Vivamus varius ex sed nisi vestibulum, sit amet tincidunt ante vestibulum. Nullam et augue blandit dolor accumsan tempus. Quisque at dictum elit, id ullamcorper dolor. Nullam feugiat mauris eu aliquam accumsan.`,
 }
 
-var y = 205.0
+var y = 25.0
 
 func drawText(c *canvas.Context, x float64, text *canvas.Text) {
 	h := text.Bounds().H
 	c.DrawText(x, y, text)
-	y -= h + 10.0
+	y += h + 10.0
 }
 
 func draw(c *canvas.Context) {
@@ -58,8 +58,7 @@ func draw(c *canvas.Context) {
 	}
 	imgDPMM := 15.0
 	imgWidth := float64(img.Bounds().Max.X) / imgDPMM
-	imgHeight := float64(img.Bounds().Max.Y) / imgDPMM
-	c.DrawImage(170.0-imgWidth, y-imgHeight, img, canvas.DPMM(imgDPMM))
+	c.DrawImage(170.0-imgWidth, y, img, canvas.DPMM(imgDPMM))
 
 	drawText(c, 30.0, canvas.NewTextBox(textFace, lorem[1], 140.0-imgWidth-10.0, 0.0, canvas.Justify, canvas.Top, 5.0, 0.0))
 	drawText(c, 30.0, canvas.NewTextBox(textFace, lorem[2], 140.0, 0.0, canvas.Justify, canvas.Top, 5.0, 0.0))

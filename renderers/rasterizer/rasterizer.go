@@ -112,14 +112,14 @@ func (r *Rasterizer) RenderPath(path *canvas.Path, style canvas.Style, m canvas.
 		fill = fill.Translate(-float64(x)/dpmm, -float64(y)/dpmm)
 		fill.ToRasterizer(ras, r.resolution)
 		col := r.colorSpace.ToLinear(style.FillColor)
-		ras.Draw(r.Image, image.Rect(x, size.Y-y, x+w, size.Y-y-h), image.NewUniform(col), image.Point{dx, dy})
+		ras.Draw(r.Image, image.Rect(x, y, x+w, y+h), image.NewUniform(col), image.Point{dx, dy})
 	}
 	if style.HasStroke() {
 		ras := vector.NewRasterizer(w, h)
 		stroke = stroke.Translate(-float64(x)/dpmm, -float64(y)/dpmm)
 		stroke.ToRasterizer(ras, r.resolution)
 		col := r.colorSpace.ToLinear(style.StrokeColor)
-		ras.Draw(r.Image, image.Rect(x, size.Y-y, x+w, size.Y-y-h), image.NewUniform(col), image.Point{dx, dy})
+		ras.Draw(r.Image, image.Rect(x, y, x+w, y+h), image.NewUniform(col), image.Point{dx, dy})
 	}
 }
 
@@ -141,7 +141,7 @@ func (r *Rasterizer) RenderImage(img image.Image, m canvas.Matrix) {
 	// draw to destination image
 	// note that we need to correct for the added margin in origin and m
 	dpmm := r.resolution.DPMM()
-	origin := m.Dot(canvas.Point{-float64(margin), float64(img2.Bounds().Size().Y - margin)}).Mul(dpmm)
+	origin := m.Dot(canvas.Point{-float64(margin), -float64(margin)}).Mul(dpmm)
 	m = m.Scale(dpmm, dpmm)
 
 	if _, ok := r.colorSpace.(canvas.LinearColorSpace); !ok {
@@ -149,8 +149,7 @@ func (r *Rasterizer) RenderImage(img image.Image, m canvas.Matrix) {
 		changeColorSpace(img2, img2, r.colorSpace.ToLinear)
 	}
 
-	h := float64(r.Bounds().Size().Y)
-	aff3 := f64.Aff3{m[0][0], -m[0][1], origin.X, -m[1][0], m[1][1], h - origin.Y}
+	aff3 := f64.Aff3{m[0][0], -m[0][1], origin.X, -m[1][0], m[1][1], origin.Y}
 	draw.CatmullRom.Transform(r, aff3, img2, img2.Bounds(), draw.Over, nil)
 }
 

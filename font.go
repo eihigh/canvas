@@ -576,6 +576,9 @@ func (face *FontFace) toPath(glyphs []text.Glyph, ppem uint16) (*Path, float64, 
 	if face.FauxItalic != 0.0 {
 		p = p.Transform(Identity.Shear(face.FauxItalic, 0.0))
 	}
+	// Flip the Y coordinates. OpenType's Y axis increases up. Go's
+	// standard graphics libraries' Y axis increases down.
+	p = p.Scale(1, -1)
 	return p, face.mmPerEm * float64(x), nil
 }
 

@@ -817,9 +817,9 @@ func (t *Text) WalkSpans(callback func(x, y float64, span TextSpan)) {
 			xOffset := span.Face.mmPerEm * float64(span.Face.XOffset)
 			yOffset := span.Face.mmPerEm * float64(span.Face.YOffset)
 			if t.Mode == HorizontalTB {
-				callback(span.x+xOffset, -line.y+yOffset, span)
+				callback(span.x+xOffset, line.y+yOffset, span)
 			} else {
-				callback(line.y+xOffset, -span.x+yOffset, span)
+				callback(line.y+xOffset, span.x+yOffset, span)
 			}
 		}
 	}
@@ -835,9 +835,9 @@ func (t *Text) RenderAsPath(r Renderer, m Matrix, resolution Resolution) {
 
 	for _, line := range t.lines {
 		for _, span := range line.spans {
-			x, y := span.x, -line.y
+			x, y := span.x, line.y
 			if t.Mode != HorizontalTB {
-				x, y = line.y, -span.x
+				x, y = line.y, span.x
 			}
 
 			style := DefaultStyle

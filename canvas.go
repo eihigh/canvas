@@ -139,20 +139,10 @@ type Renderer interface {
 
 ////////////////////////////////////////////////////////////////
 
-// CoordSystem is the coordinate system, which can be either of the four cartesian quadrants. Most useful are the I'th and IV'th quadrants. CartesianI is the default quadrant with the zero-point in the bottom-left (the default for mathematics). The CartesianII has its zero-point in the bottom-right, CartesianIII in the top-right, and CartesianIV in the top-left (often used as default for printing devices). See https://en.wikipedia.org/wiki/Cartesian_coordinate_system#Quadrants_and_octants for an explanation.
-type CoordSystem int
-
-// see CoordSystem
-const (
-	CartesianI CoordSystem = iota
-	CartesianIV
-)
-
 type ContextState struct {
 	Style
-	view        Matrix
-	coordView   Matrix
-	coordSystem CoordSystem
+	view      Matrix
+	coordView Matrix
 }
 
 // Context maintains the state for the current path, path style, and view transformation matrix.
@@ -170,10 +160,9 @@ func NewContext(r Renderer) *Context {
 		Renderer: r,
 		path:     &Path{},
 		ContextState: ContextState{
-			Style:       DefaultStyle,
-			view:        Identity,
-			coordView:   Identity,
-			coordSystem: CartesianI,
+			Style:     DefaultStyle,
+			view:      Identity,
+			coordView: Identity,
 		},
 		stack: nil,
 	}
@@ -223,11 +212,6 @@ func (c *Context) SetCoordView(coordView Matrix) {
 // SetCoordRect sets the current affine transformation matrix through which all operation coordinates will be transformed. It will transform coordinates from (0,0)--(width,height) to the target `rect`.
 func (c *Context) SetCoordRect(rect Rect, width, height float64) {
 	c.coordView = Identity.Translate(rect.X, rect.Y).Scale(rect.W/width, rect.H/height)
-}
-
-// SetCoordSystem sets the current affine transformation matrix through which all operation coordinates will be transformed as a Cartesian coordinate system.
-func (c *Context) SetCoordSystem(coordSystem CoordSystem) {
-	c.coordSystem = coordSystem
 }
 
 // View returns the current affine transformation matrix through which all operations will be transformed.
@@ -444,11 +428,7 @@ func (c *Context) DrawPath(x, y float64, paths ...*Path) {
 	}
 
 	coord := c.coordView.Dot(Point{x, y})
-	m := Identity
-	if c.coordSystem == CartesianIV {
-		m = m.ReflectYAbout(c.Height() / 2.0)
-	}
-	m = m.Mul(c.view).Translate(coord.X, coord.Y)
+	m := c.view.Translate(coord.X, coord.Y)
 	for _, path := range paths {
 		var dashes []float64
 		path, dashes = path.checkDash(c.Style.DashOffset, c.Style.Dashes)
@@ -463,11 +443,7 @@ func (c *Context) DrawPath(x, y float64, paths ...*Path) {
 
 // DrawText draws text at position (x,y) using the current draw state.
 func (c *Context) DrawText(x, y float64, texts ...*Text) {
-	coordView := Identity
-	if c.coordSystem == CartesianIV {
-		coordView = coordView.ReflectYAbout(c.Height() / 2.0)
-	}
-	coord := coordView.Mul(c.coordView).Dot(Point{x, y})
+	coord := c.coordView.Dot(Point{x, y})
 	m := c.view.Translate(coord.X, coord.Y)
 	for _, text := range texts {
 		if text.Empty() {
@@ -483,16 +459,8 @@ func (c *Context) DrawImage(x, y float64, img image.Image, resolution Resolution
 		return
 	}
 
-	var coord Point
-	if c.coordSystem == CartesianI {
-		coord = c.coordView.Dot(Point{x, y})
-	} else if c.coordSystem == CartesianIV {
-		coord = Identity.ReflectYAbout(c.Height() / 2.0).Mul(c.coordView).Dot(Point{x, y})
-	}
+	coord := c.coordView.Dot(Point{x, y})
 	m := c.view.Translate(coord.X, coord.Y).Scale(1.0/resolution.DPMM(), 1.0/resolution.DPMM())
-	if c.coordSystem == CartesianIV {
-		m = m.Translate(0.0, -float64(img.Bounds().Size().Y))
-	}
 	c.RenderImage(img, m)
 }
 
