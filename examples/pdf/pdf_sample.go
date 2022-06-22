@@ -43,6 +43,7 @@ func main() {
 
 	c1 := canvas.New(210, 297)
 	ctx1 := canvas.NewContext(c1)
+	ctx1.SetCoordSystem(canvas.CartesianI)
 	ctx1.SetFillColor(canvas.Beige)
 	ctx1.DrawPath(0, 0, canvas.Rectangle(210, 297))
 	drawDocument(ctx1)
@@ -52,6 +53,7 @@ func main() {
 
 	c2 := canvas.New(210, 297)
 	ctx2 := canvas.NewContext(c2)
+	ctx2.SetCoordSystem(canvas.CartesianI)
 	ctx2.SetFillColor(canvas.White)
 	ctx2.DrawPath(0, 0, canvas.Rectangle(210, 297))
 	richDraw(ctx2)

@@ -58,6 +58,7 @@ func loop(w *app.Window) error {
 			layout.Center.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 				c := gio.NewContain(gtx, 200.0, 100.0)
 				ctx := canvas.NewContext(c)
+				ctx.SetCoordSystem(canvas.CartesianI)
 				draw(ctx)
 				return c.Dimensions()
 			})

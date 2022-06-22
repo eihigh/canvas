@@ -1,3 +1,4 @@
+//go:build js
 // +build js
 
 package main
@@ -43,6 +44,7 @@ func main() {
 	c := htmlcanvas.New(cvs, 200, 100, 5.0)
 
 	ctx := canvas.NewContext(c)
+	ctx.SetCoordSystem(canvas.CartesianI)
 	draw(ctx)
 
 	alive := make(chan bool)

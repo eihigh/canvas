@@ -18,6 +18,7 @@ func main() {
 
 	c := canvas.New(200, 230)
 	ctx := canvas.NewContext(c)
+	ctx.SetCoordSystem(canvas.CartesianI)
 	ctx.SetFillColor(canvas.White)
 	ctx.DrawPath(0, 0, canvas.Rectangle(c.W, c.H))
 	draw(ctx)

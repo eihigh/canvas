@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"image/color"
 
+	"github.com/eihigh/canvas"
+	"github.com/eihigh/canvas/renderers"
 	"github.com/paulmach/orb"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmapi"
 	"github.com/paulmach/osm/osmgeojson"
-	"github.com/eihigh/canvas"
-	"github.com/eihigh/canvas/renderers"
 )
 
 var dejaVuSerif *canvas.FontFamily
@@ -23,6 +23,7 @@ func main() {
 
 	c := canvas.New(100, 100)
 	ctx := canvas.NewContext(c)
+	ctx.SetCoordSystem(canvas.CartesianI)
 	draw(ctx)
 	renderers.Write("out.png", c, canvas.DPMM(8.0))
 }

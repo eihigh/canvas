@@ -40,6 +40,7 @@ func main() {
 	defer c.Close()
 
 	ctx := canvas.NewContext(c)
+	ctx.SetCoordSystem(canvas.CartesianI)
 	ctx.SetView(canvas.Identity.Translate(0, 0).Scale(0.5, 0.5))
 	draw(ctx)
 }

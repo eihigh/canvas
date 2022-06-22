@@ -173,7 +173,7 @@ func NewContext(r Renderer) *Context {
 			Style:       DefaultStyle,
 			view:        Identity,
 			coordView:   Identity,
-			coordSystem: CartesianI,
+			coordSystem: CartesianIV,
 		},
 		stack: nil,
 	}
