@@ -32,7 +32,7 @@ func main() {
 }
 
 func draw(c *canvas.Context) {
-	tickFace := fontFamily.Face(8.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	tickFace := fontFamily.Face(8.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
 
 	datafile, err := os.Open("co2-mm-mlo.csv")
 	if err != nil {
@@ -121,8 +121,8 @@ func draw(c *canvas.Context) {
 	// Draw the labels
 	c.SetFillColor(canvas.Black)
 
-	labelFace := fontFamily.Face(14.0, color.Black, canvas.FontRegular, canvas.FontNormal)
-	labelSubFace := fontFamily.Face(14.0, color.Black, canvas.FontRegular, canvas.FontSubscript)
+	labelFace := fontFamily.Face(14.0*canvas.PtToMM, color.Black, canvas.FontRegular, canvas.FontNormal)
+	labelSubFace := fontFamily.Face(14.0*canvas.PtToMM, color.Black, canvas.FontRegular, canvas.FontSubscript)
 	rt := canvas.NewRichText(labelFace)
 	rt.Add(labelFace, "CO")
 	rt.Add(labelSubFace, "2")
@@ -134,8 +134,8 @@ func draw(c *canvas.Context) {
 	c.Pop()
 	c.DrawText(60.0, -10.0, canvas.NewTextLine(labelFace, "Year", canvas.Center))
 
-	titleFace := fontFamily.Face(16.0, color.Black, canvas.FontRegular, canvas.FontNormal)
-	titleSubFace := fontFamily.Face(16.0, color.Black, canvas.FontRegular, canvas.FontSubscript)
+	titleFace := fontFamily.Face(16.0*canvas.PtToMM, color.Black, canvas.FontRegular, canvas.FontNormal)
+	titleSubFace := fontFamily.Face(16.0*canvas.PtToMM, color.Black, canvas.FontRegular, canvas.FontSubscript)
 	rt = canvas.NewRichText(titleFace)
 	rt.Add(titleFace, "Atmospheric CO")
 	rt.Add(titleSubFace, "2")

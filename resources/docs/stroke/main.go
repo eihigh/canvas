@@ -43,7 +43,7 @@ func drawStrokedPath(c *canvas.Context, x, y float64, path string, cr canvas.Cap
 }
 
 func drawText(c *canvas.Context, x, y float64, text string) {
-	face := fontFamily.Face(18.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	face := fontFamily.Face(18.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
 	c.SetFillColor(canvas.Black)
 	c.DrawText(x, y, canvas.NewTextLine(face, text, canvas.Center))
 }

@@ -13,16 +13,16 @@ func TestFontFamily(t *testing.T) {
 		test.Error(t, err)
 	}
 
-	face := family.Face(12.0*ptPerMm, Black, FontRegular, FontNormal)
+	face := family.Face(12.0, Black, FontRegular, FontNormal)
 	test.Float(t, face.FauxBold, 0.0)
 	test.T(t, face.Style.CSS(), 400)
 
-	face = family.Face(12.0*ptPerMm, Black, FontBold|FontItalic, FontNormal)
+	face = family.Face(12.0, Black, FontBold|FontItalic, FontNormal)
 	test.Float(t, face.FauxBold, 0.02)
 	test.Float(t, face.FauxItalic, 0.3)
 	test.T(t, face.Style.CSS(), 700)
 
-	//face = family.Face(12.0*ptPerMm, Black, FontBold|FontItalic, FontSubscript)
+	//face = family.Face(12.0, Black, FontBold|FontItalic, FontSubscript)
 	//test.T(t, face.YOffset, int32(0))
 	//test.Float(t, face.FauxBold, 0.48*0.583)
 	//test.Float(t, face.FauxItalic, 0.3)
@@ -34,8 +34,8 @@ func TestFontFace(t *testing.T) {
 	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
-	pt := ptPerMm * float64(family.fonts[FontRegular].Head.UnitsPerEm)
-	face := family.Face(pt, Black, FontRegular, FontNormal)
+	mm := float64(family.fonts[FontRegular].Head.UnitsPerEm)
+	face := family.Face(mm, Black, FontRegular, FontNormal)
 
 	metrics := face.Metrics()
 	test.Float(t, face.Size, 2048)
@@ -60,31 +60,31 @@ func TestFontDecoration(t *testing.T) {
 	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
-	pt := ptPerMm * float64(family.fonts[FontRegular].Head.UnitsPerEm)
+	mm := float64(family.fonts[FontRegular].Head.UnitsPerEm)
 
 	// ascent = 1901
 	// underlineDistance = 130, underlineThickness = 90
 	// yStrikoutSize = 102, yStrikeoutPosition = 530
 	// note that we increase distance by half the thickness to match the implementation of Firefox
-	face := family.Face(pt, Black, FontRegular, FontNormal, FontUnderline)
+	face := family.Face(mm, Black, FontRegular, FontNormal, FontUnderline)
 	test.T(t, face.Decorate(10.0), MustParseSVG("M0 -265L10 -265L10 -175L0 -175z"))
 
-	face = family.Face(pt, Black, FontRegular, FontNormal, FontOverline)
+	face = family.Face(mm, Black, FontRegular, FontNormal, FontOverline)
 	test.T(t, face.Decorate(10.0), MustParseSVG("M0 1811L10 1811L10 1901L0 1901z"))
 
-	face = family.Face(pt, Black, FontRegular, FontNormal, FontStrikethrough)
+	face = family.Face(mm, Black, FontRegular, FontNormal, FontStrikethrough)
 	test.T(t, face.Decorate(10.0), MustParseSVG("M0 530L10 530L10 632L0 632z"))
 
-	face = family.Face(pt, Black, FontRegular, FontNormal, FontDoubleUnderline)
+	face = family.Face(mm, Black, FontRegular, FontNormal, FontDoubleUnderline)
 	test.T(t, face.Decorate(10.0), MustParseSVG("M0 -265L10 -265L10 -175L0 -175zM0 -400L10 -400L10 -310L0 -310z"))
 
-	face = family.Face(pt, Black, FontRegular, FontNormal, FontDottedUnderline)
+	face = family.Face(mm, Black, FontRegular, FontNormal, FontDottedUnderline)
 	test.T(t, face.Decorate(89.0), MustParseSVG(""))
 	test.T(t, face.Decorate(90.0), MustParseSVG("M90 -220A45 45 0 0 1 0 -220A45 45 0 0 1 90 -220z"))
 	test.T(t, face.Decorate(269.0), MustParseSVG("M179.5 -220A45 45 0 0 1 89.5 -220A45 45 0 0 1 179.5 -220z"))
 	test.T(t, face.Decorate(270.0), MustParseSVG("M90 -220A45 45 0 0 1 0 -220A45 45 0 0 1 90 -220zM270 -220A45 45 0 0 1 180 -220A45 45 0 0 1 270 -220z"))
 
-	face = family.Face(pt, Black, FontRegular, FontNormal, FontDashedUnderline)
+	face = family.Face(mm, Black, FontRegular, FontNormal, FontDashedUnderline)
 	test.T(t, face.Decorate(809.0), MustParseSVG("M0 -265L809 -265L809 -175L0 -175z"))
 	test.T(t, face.Decorate(810.0), MustParseSVG("M0 -265L270 -265L270 -175L0 -175zM540 -265L810 -265L810 -175L540 -175z"))
 }

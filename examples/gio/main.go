@@ -88,7 +88,7 @@ func drawText(c *canvas.Context, x, y float64, face *canvas.FontFace, rich *canv
 
 func draw(c *canvas.Context) {
 	// Draw a comprehensive text box
-	pt := 14.0
+	pt := 14.0 * canvas.PtToMM
 	face := fontLatin.Face(pt, canvas.Black, canvas.FontRegular, canvas.FontNormal)
 	rt := canvas.NewRichText(face)
 	rt.Add(face, "Lorem dolor ipsum ")
@@ -122,7 +122,7 @@ func draw(c *canvas.Context) {
 	drawText(c, 5, 95, face, rt)
 
 	// Draw the word Stroke being stroked
-	face = fontLatin.Face(80.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	face = fontLatin.Face(80.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
 	p, _, _ := face.ToPath("Stroke")
 	c.DrawPath(100, 5, p.Stroke(0.75, canvas.RoundCap, canvas.RoundJoin))
 

@@ -237,10 +237,10 @@ func (f *Font) SetFeatures(features string) {
 }
 
 // Face gets the font face given by the font size in points and its style.
-func (f *Font) Face(size float64, col color.Color, deco ...FontDecorator) *FontFace {
+func (f *Font) Face(mm float64, col color.Color, deco ...FontDecorator) *FontFace {
 	face := &FontFace{}
 	face.Font = f
-	face.Size = size * mmPerPt
+	face.Size = mm
 	face.Style = f.style
 	face.Variant = FontNormal
 
@@ -402,10 +402,10 @@ func (family *FontFamily) MustLoadFont(b []byte, index int, style FontStyle) {
 }
 
 // Face gets the font face given by the font size in points and its style.
-func (family *FontFamily) Face(size float64, col color.Color, style FontStyle, variant FontVariant, deco ...FontDecorator) *FontFace {
+func (family *FontFamily) Face(mm float64, col color.Color, style FontStyle, variant FontVariant, deco ...FontDecorator) *FontFace {
 	face := &FontFace{}
 	face.Font = family.fonts[style]
-	face.Size = size * mmPerPt
+	face.Size = mm
 	face.Style = style
 	face.Variant = variant
 
@@ -502,7 +502,7 @@ func (family *FontFamily) Face(size float64, col color.Color, style FontStyle, v
 type FontFace struct {
 	Font *Font
 
-	Size    float64 // in pt
+	Size    float64 // in millimeter per em
 	Style   FontStyle
 	Variant FontVariant
 

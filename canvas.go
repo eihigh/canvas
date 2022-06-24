@@ -14,6 +14,7 @@ const mmPerPt = 25.4 / 72.0
 const ptPerMm = 72.0 / 25.4
 const mmPerInch = 25.4
 const inchPerMm = 1.0 / 25.4
+const PtToMM = mmPerPt
 
 // Resolution is used for rasterizing. Higher resolutions will result in larger images.
 type Resolution float64

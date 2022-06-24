@@ -12,7 +12,7 @@ func TestTextLine(t *testing.T) {
 	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
-	face := family.Face(12.0*ptPerMm, Black, FontRegular, FontNormal, FontUnderline)
+	face := family.Face(12.0, Black, FontRegular, FontNormal, FontUnderline)
 
 	text := NewTextLine(face, "test\nline", Left)
 	test.T(t, len(text.fonts), 1)
@@ -38,8 +38,8 @@ func TestRichText(t *testing.T) {
 	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
-	pt := ptPerMm * float64(family.fonts[FontRegular].Head.UnitsPerEm)
-	face := family.Face(pt, Black, FontRegular, FontNormal) // line height is 13.96875
+	mm := float64(family.fonts[FontRegular].Head.UnitsPerEm)
+	face := family.Face(mm, Black, FontRegular, FontNormal) // line height is 13.96875
 
 	rt := NewRichText(face)
 	rt.Add(face, "ee. ee eeee") // e is 1212 wide, dot and space are 651 wide
@@ -142,8 +142,8 @@ func TestRichText2(t *testing.T) {
 	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
-	pt := ptPerMm * float64(family.fonts[FontRegular].Head.UnitsPerEm)
-	face := family.Face(pt, Black, FontRegular, FontNormal) // line height is 13.96875
+	mm := float64(family.fonts[FontRegular].Head.UnitsPerEm)
+	face := family.Face(mm, Black, FontRegular, FontNormal) // line height is 13.96875
 
 	rt := NewRichText(face)
 	rt.Add(face, " a")
@@ -155,9 +155,9 @@ func TestTextBounds(t *testing.T) {
 	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
-	pt := ptPerMm * float64(family.fonts[FontRegular].Head.UnitsPerEm)
-	face8 := family.Face(pt, Black, FontRegular, FontNormal, FontUnderline)
-	face12 := family.Face(1.5*pt, Black, FontRegular, FontNormal, FontUnderline)
+	mm := float64(family.fonts[FontRegular].Head.UnitsPerEm)
+	face8 := family.Face(mm, Black, FontRegular, FontNormal, FontUnderline)
+	face12 := family.Face(1.5*mm, Black, FontRegular, FontNormal, FontUnderline)
 
 	rt := NewRichText(face8)
 	rt.Add(face8, "test")

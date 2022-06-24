@@ -31,7 +31,7 @@ func TestCanvas(t *testing.T) {
 	if err := family.LoadFontFileFS(resources.FS, "DejaVuSerif.ttf", FontRegular); err != nil {
 		test.Error(t, err)
 	}
-	face := family.Face(10.0, Green, FontItalic|FontBold, FontNormal)
+	face := family.Face(10.0*PtToMM, Green, FontItalic|FontBold, FontNormal)
 	text := NewTextLine(face, "Text", Left)
 
 	img := image.NewNRGBA(image.Rect(0, 0, 2, 2))
