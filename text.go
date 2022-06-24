@@ -721,7 +721,7 @@ func (t *Text) MostCommonFontFace() *FontFace {
 		}
 	}
 
-	face := font.Face(size*ptPerMm, col)
+	face := font.Face(size, col)
 	face.Style = style
 	face.Variant = variant
 	return face

@@ -43,8 +43,8 @@ func drawText(c *canvas.Context, x float64, text *canvas.Text) {
 func draw(c *canvas.Context) {
 	c.SetFillColor(canvas.Black)
 
-	headerFace := fontFamily.Face(28.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
-	textFace := fontFamily.Face(12.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	headerFace := fontFamily.Face(28.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	textFace := fontFamily.Face(12.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
 
 	drawText(c, 30.0, canvas.NewTextBox(headerFace, "Document Example", 0.0, 0.0, canvas.Left, canvas.Top, 0.0, 0.0))
 	drawText(c, 30.0, canvas.NewTextBox(textFace, lorem[0], 140.0, 0.0, canvas.Justify, canvas.Top, 5.0, 0.0))

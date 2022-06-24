@@ -76,10 +76,10 @@ func doTestPDFText(t *testing.T, subsetFonts bool, expectedSize int, filename st
 	err = ebGaramond.LoadFontFileFS(resources.FS, "EBGaramond12-Regular.otf", canvas.FontRegular)
 	test.Error(t, err)
 
-	dejaVu8 := dejaVuSerif.Face(8, canvas.Black, canvas.FontRegular, canvas.FontNormal)
-	dejaVu12 := dejaVuSerif.Face(12, canvas.Red, canvas.FontRegular, canvas.FontNormal, canvas.FontUnderline)
-	dejaVu12sub := dejaVuSerif.Face(12, canvas.Black, canvas.FontRegular, canvas.FontSubscript)
-	garamond10 := ebGaramond.Face(10, canvas.Black, canvas.FontBold, canvas.FontNormal)
+	dejaVu8 := dejaVuSerif.Face(8*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	dejaVu12 := dejaVuSerif.Face(12*canvas.PtToMM, canvas.Red, canvas.FontRegular, canvas.FontNormal, canvas.FontUnderline)
+	dejaVu12sub := dejaVuSerif.Face(12*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontSubscript)
+	garamond10 := ebGaramond.Face(10*canvas.PtToMM, canvas.Black, canvas.FontBold, canvas.FontNormal)
 
 	rt := canvas.NewRichText(dejaVu12)
 	rt.Add(dejaVu8, "dejaVu8")

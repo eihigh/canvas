@@ -96,10 +96,10 @@ func drawDocument(c *canvas.Context) {
 	y = 290.0
 	c.SetFillColor(canvas.Black)
 
-	headerFace := fontLatin.Face(24.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
-	text12Face := fontLatin.Face(12.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
-	text10Face := fontLatin.Face(10.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
-	boldFace := fontLatin.Face(12.0, canvas.Black, canvas.FontBold, canvas.FontNormal)
+	headerFace := fontLatin.Face(24.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	text12Face := fontLatin.Face(12.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	text10Face := fontLatin.Face(10.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	boldFace := fontLatin.Face(12.0*canvas.PtToMM, canvas.Black, canvas.FontBold, canvas.FontNormal)
 
 	logo, err := resources.FS.Open(lenna)
 	if err != nil {
@@ -156,7 +156,7 @@ func richDrawText(c *canvas.Context, x float64, face *canvas.FontFace, rich *can
 func richDraw(c *canvas.Context) {
 	y = 290.0
 	// Draw a comprehensive text box
-	pt := 14.0
+	pt := 14.0 * canvas.PtToMM
 	face := fontLatin.Face(pt, canvas.Black, canvas.FontRegular, canvas.FontNormal)
 	rt := canvas.NewRichText(face)
 	rt.Add(face, "Lorem dolor ipsum ")

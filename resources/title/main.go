@@ -25,7 +25,7 @@ func main() {
 
 func draw(c *canvas.Context) {
 	x := 2.0
-	face := font.Face(80.0, canvas.Black, canvas.FontRegular, canvas.FontNormal)
+	face := font.Face(80.0*canvas.PtToMM, canvas.Black, canvas.FontRegular, canvas.FontNormal)
 
 	p, adv, _ := face.ToPath("C")
 	c.SetFillColor(color.RGBA{128, 0, 64, 255})
