@@ -4,7 +4,6 @@ import (
 	"image/color"
 	"math"
 	"reflect"
-	"sort"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -76,21 +75,20 @@ func (wm WritingMode) String() string {
 
 // Text holds the representation of a text object.
 type Text struct {
-	lines []line
-	fonts map[*Font]bool
+	Lines []TextLine
 	Mode  WritingMode
 }
 
-type line struct {
-	y     float64
-	spans []TextSpan
+type TextLine struct {
+	Y     float64
+	Spans []TextSpan
 }
 
 // Heights returns the maximum top, ascent, descent, and bottom heights of the line, where top and bottom are equal to ascent and descent respectively with added line spacing.
-func (l line) Heights(mode WritingMode, orient TextOrientation) (float64, float64, float64, float64) {
+func (l TextLine) Heights(mode WritingMode, orient TextOrientation) (float64, float64, float64, float64) {
 	top, ascent, descent, bottom := 0.0, 0.0, 0.0, 0.0
 	if mode == HorizontalTB {
-		for _, span := range l.spans {
+		for _, span := range l.Spans {
 			spanAscent, spanDescent, lineSpacing := span.Face.Metrics().Ascent, span.Face.Metrics().Descent, span.Face.Metrics().LineGap
 			top = math.Max(top, spanAscent+lineSpacing)
 			ascent = math.Max(ascent, spanAscent)
@@ -99,7 +97,7 @@ func (l line) Heights(mode WritingMode, orient TextOrientation) (float64, float6
 		}
 	} else if orient == Upright {
 		width := 0.0
-		for _, span := range l.spans {
+		for _, span := range l.Spans {
 			for _, glyph := range span.Glyphs {
 				width = math.Max(width, span.Face.textWidth([]canvasText.Glyph{glyph}))
 			}
@@ -147,9 +145,7 @@ func itemizeString(log string, script canvasText.Script) ([]string, []string) {
 
 // NewTextLine is a simple text line using a single font face, a string (supporting new lines) and horizontal alignment (Left, Center, Right). The text's baseline will be drawn on the current coordinate.
 func NewTextLine(face *FontFace, s string, halign TextAlign) *Text {
-	t := &Text{
-		fonts: map[*Font]bool{face.Font: true},
-	}
+	t := &Text{}
 
 	ascent, descent, spacing := face.Metrics().Ascent, face.Metrics().Descent, face.Metrics().LineGap
 
@@ -166,7 +162,7 @@ func NewTextLine(face *FontFace, s string, halign TextAlign) *Text {
 			if i < j {
 				ppem := face.PPEM(DefaultResolution)
 				lineWidth := 0.0
-				line := line{y: y, spans: []TextSpan{}}
+				line := TextLine{Y: y, Spans: []TextSpan{}}
 				itemsL, itemsV := itemizeString(s[i:j], face.Script)
 				for k := 0; k < len(itemsL); k++ {
 					glyphs := face.Font.shaper.Shape(itemsV[k], ppem, face.Direction, face.Script, face.Language, face.Font.features, face.Font.variations)
@@ -180,7 +176,7 @@ func NewTextLine(face *FontFace, s string, halign TextAlign) *Text {
 						}
 						text = string(reverseText)
 					}
-					line.spans = append(line.spans, TextSpan{
+					line.Spans = append(line.Spans, TextSpan{
 						x:         lineWidth,
 						Width:     width,
 						Face:      face,
@@ -191,15 +187,15 @@ func NewTextLine(face *FontFace, s string, halign TextAlign) *Text {
 					lineWidth += width
 				}
 				if halign == Center {
-					for k := range line.spans {
-						line.spans[k].x = -lineWidth / 2.0
+					for k := range line.Spans {
+						line.Spans[k].x = -lineWidth / 2.0
 					}
 				} else if halign == Right {
-					for k := range line.spans {
-						line.spans[k].x = -lineWidth
+					for k := range line.Spans {
+						line.Spans[k].x = -lineWidth
 					}
 				}
-				t.lines = append(t.lines, line)
+				t.Lines = append(t.Lines, line)
 			}
 			y += ascent + descent + spacing
 			i = j + utf8.RuneLen(r)
@@ -424,8 +420,7 @@ func (rt *RichText) ToText(width, height float64, halign, valign TextAlign, inde
 
 	// build up lines
 	t := &Text{
-		lines: []line{{}},
-		fonts: map[*Font]bool{},
+		Lines: []TextLine{{}},
 		Mode:  rt.mode,
 	}
 	glyphs = append(glyphs, canvasText.Glyph{Cluster: uint32(len(vis))}) // makes indexing easier
@@ -444,13 +439,13 @@ func (rt *RichText) ToText(width, height float64, halign, valign TextAlign, inde
 			// add spaces to previous span
 			for _, glyph := range glyphs[i : i+item.Size] {
 				if glyph.Text != "\u200B" {
-					t.lines[j].spans[len(t.lines[j].spans)-1].Text += glyph.Text
+					t.Lines[j].Spans[len(t.Lines[j].Spans)-1].Text += glyph.Text
 				}
 			}
 
 			if item.Type == canvasText.PenaltyType && item.Flagged && item.Width != 0.0 {
-				if 0 < len(t.lines[j].spans) {
-					span := &t.lines[j].spans[len(t.lines[j].spans)-1]
+				if 0 < len(t.Lines[j].Spans) {
+					span := &t.Lines[j].Spans[len(t.Lines[j].Spans)-1]
 					id := span.Face.Font.GlyphIndex('-')
 					glyph := canvasText.Glyph{
 						SFNT:     span.Face.Font.SFNT,
@@ -465,20 +460,20 @@ func (rt *RichText) ToText(width, height float64, halign, valign TextAlign, inde
 				}
 			}
 
-			_, ascent, _, bottom := t.lines[j].Heights(rt.mode, rt.orient)
+			_, ascent, _, bottom := t.Lines[j].Heights(rt.mode, rt.orient)
 			if 0 < j {
 				ascent *= lineSpacing
 			}
 			bottom *= lineSpacing
 
-			t.lines[j].y = y + ascent
+			t.Lines[j].Y = y + ascent
 			y += ascent + bottom
 			if height != 0.0 && (height < y || position == len(items)-1) {
 				// doesn't fit or at the end of items
 				break
 			}
 
-			t.lines = append(t.lines, line{})
+			t.Lines = append(t.Lines, TextLine{})
 			if j+1 < len(breaks) {
 				j++
 			}
@@ -511,7 +506,7 @@ func (rt *RichText) ToText(width, height float64, halign, valign TextAlign, inde
 
 					s := string(logRunes[ar:br])
 					w := faces[k].textWidth(glyphs[a:b])
-					t.lines[j].spans = append(t.lines[j].spans, TextSpan{
+					t.Lines[j].Spans = append(t.Lines[j].Spans, TextSpan{
 						x:         x + dx,
 						Width:     w,
 						Face:      faces[k],
@@ -519,7 +514,6 @@ func (rt *RichText) ToText(width, height float64, halign, valign TextAlign, inde
 						Glyphs:    glyphs[a:b],
 						Direction: writingModeDirection(rt.mode, faces[k].Direction),
 					})
-					t.fonts[faces[k].Font] = true
 					k = nextK
 
 					a = b
@@ -543,20 +537,20 @@ func (rt *RichText) ToText(width, height float64, halign, valign TextAlign, inde
 
 			// add spaces to previous span
 			for _, glyph := range glyphs[i : i+item.Size] {
-				t.lines[j].spans[len(t.lines[j].spans)-1].Text += glyph.Text
+				t.Lines[j].Spans[len(t.Lines[j].Spans)-1].Text += glyph.Text
 			}
 		}
 		i += item.Size
 	}
 
-	_, ascent, descent, bottom := t.lines[j].Heights(rt.mode, rt.orient)
+	_, ascent, descent, bottom := t.Lines[j].Heights(rt.mode, rt.orient)
 	y -= bottom * lineSpacing
 
 	if height != 0.0 && height < y+descent {
 		// doesn't fit
-		t.lines = t.lines[:len(t.lines)-1]
+		t.Lines = t.Lines[:len(t.Lines)-1]
 		if 0 < j {
-			_, _, descent2, bottom2 := t.lines[j-1].Heights(rt.mode, rt.orient)
+			_, _, descent2, bottom2 := t.Lines[j-1].Heights(rt.mode, rt.orient)
 			y += descent2 - (bottom2+ascent)*lineSpacing
 		} else {
 			// no lines at all
@@ -579,20 +573,20 @@ func (rt *RichText) ToText(width, height float64, halign, valign TextAlign, inde
 		if valign == Center {
 			dy /= 2.0
 		}
-		for j := range t.lines {
-			t.lines[j].y += dy
+		for j := range t.Lines {
+			t.Lines[j].Y += dy
 		}
 	} else if valign == Justify {
-		ddy := (height - y) / float64(len(t.lines)-1)
+		ddy := (height - y) / float64(len(t.Lines)-1)
 		dy := 0.0
-		for j := range t.lines {
-			t.lines[j].y += dy
+		for j := range t.Lines {
+			t.Lines[j].Y += dy
 			dy += ddy
 		}
 	}
 	if rt.mode == VerticalRL {
-		for j := range t.lines {
-			t.lines[j].y = height - t.lines[j].y
+		for j := range t.Lines {
+			t.Lines[j].Y = height - t.Lines[j].Y
 		}
 	}
 	return t
@@ -600,8 +594,8 @@ func (rt *RichText) ToText(width, height float64, halign, valign TextAlign, inde
 
 // Empty returns true if there are no text lines or text spans.
 func (t *Text) Empty() bool {
-	for _, line := range t.lines {
-		if len(line.spans) != 0 {
+	for _, line := range t.Lines {
+		if len(line.Spans) != 0 {
 			return false
 		}
 	}
@@ -610,26 +604,26 @@ func (t *Text) Empty() bool {
 
 // Heights returns the top and bottom position of the first and last line respectively.
 func (t *Text) Heights() (float64, float64) {
-	if len(t.lines) == 0 {
+	if len(t.Lines) == 0 {
 		return 0.0, 0.0
 	}
-	firstLine := t.lines[0]
-	lastLine := t.lines[len(t.lines)-1]
+	firstLine := t.Lines[0]
+	lastLine := t.Lines[len(t.Lines)-1]
 	_, ascent, _, _ := firstLine.Heights(HorizontalTB, Natural)
 	_, _, descent, _ := lastLine.Heights(HorizontalTB, Natural)
-	return -firstLine.y + ascent, lastLine.y + descent
+	return -firstLine.Y + ascent, lastLine.Y + descent
 }
 
 // Bounds returns the bounding rectangle that defines the text box.
 func (t *Text) Bounds() Rect {
-	if len(t.lines) == 0 || len(t.lines[0].spans) == 0 {
+	if len(t.Lines) == 0 || len(t.Lines[0].Spans) == 0 {
 		return Rect{}
 	}
 	rect := Rect{}
-	for _, line := range t.lines {
-		for _, span := range line.spans {
+	for _, line := range t.Lines {
+		for _, span := range line.Spans {
 			// TODO: vertical text
-			rect = rect.Add(Rect{span.x, -line.y - span.Face.Metrics().Descent, span.Width, span.Face.Metrics().Ascent + span.Face.Metrics().Descent})
+			rect = rect.Add(Rect{span.x, -line.Y - span.Face.Metrics().Descent, span.Width, span.Face.Metrics().Ascent + span.Face.Metrics().Descent})
 		}
 	}
 	return rect
@@ -637,19 +631,19 @@ func (t *Text) Bounds() Rect {
 
 // OutlineBounds returns the rectangle that contains the entire text box, i.e. the glyph outlines (slow).
 func (t *Text) OutlineBounds() Rect {
-	if len(t.lines) == 0 || len(t.lines[0].spans) == 0 {
+	if len(t.Lines) == 0 || len(t.Lines[0].Spans) == 0 {
 		return Rect{}
 	}
 	r := Rect{}
-	for _, line := range t.lines {
-		for _, span := range line.spans {
+	for _, line := range t.Lines {
+		for _, span := range line.Spans {
 			// TODO: vertical text
 			p, _, err := span.Face.toPath(span.Glyphs, span.Face.PPEM(DefaultResolution))
 			if err != nil {
 				panic(err)
 			}
 			spanBounds := p.Bounds()
-			spanBounds = spanBounds.Move(Point{span.x, -line.y})
+			spanBounds = spanBounds.Move(Point{span.x, -line.Y})
 			r = r.Add(spanBounds)
 		}
 	}
@@ -659,23 +653,6 @@ func (t *Text) OutlineBounds() Rect {
 	return r
 }
 
-// Fonts returns the list of fonts used.
-func (t *Text) Fonts() []*Font {
-	fonts := []*Font{}
-	fontNames := []string{}
-	fontMap := map[string]*Font{}
-	for font := range t.fonts {
-		name := font.Name()
-		fontNames = append(fontNames, name)
-		fontMap[name] = font
-	}
-	sort.Strings(fontNames)
-	for _, name := range fontNames {
-		fonts = append(fonts, fontMap[name])
-	}
-	return fonts
-}
-
 // MostCommonFontFace returns the most common FontFace of the text.
 func (t *Text) MostCommonFontFace() *FontFace {
 	fonts := map[*Font]int{}
@@ -683,8 +660,8 @@ func (t *Text) MostCommonFontFace() *FontFace {
 	styles := map[FontStyle]int{}
 	variants := map[FontVariant]int{}
 	colors := map[color.RGBA]int{}
-	for _, line := range t.lines {
-		for _, span := range line.spans {
+	for _, line := range t.Lines {
+		for _, span := range line.Spans {
 			fonts[span.Face.Font]++
 			sizes[span.Face.Size]++
 			styles[span.Face.Style]++
@@ -743,10 +720,10 @@ func (t *Text) WalkDecorations(callback func(col color.RGBA, deco *Path)) {
 	// accumulate paths with colors for all lines
 	cs := []color.RGBA{}
 	ps := []*Path{}
-	for _, line := range t.lines {
+	for _, line := range t.Lines {
 		// track active decorations, when finished draw and append to accumulated paths
 		active := []decorationSpan{}
-		for k, span := range line.spans {
+		for k, span := range line.Spans {
 			foundActive := make([]bool, len(active))
 			for _, spanDeco := range span.Face.Deco {
 				found := false
@@ -774,7 +751,7 @@ func (t *Text) WalkDecorations(callback func(col color.RGBA, deco *Path)) {
 				}
 			}
 
-			if k == len(line.spans)-1 {
+			if k == len(line.Spans)-1 {
 				foundActive = make([]bool, len(active))
 			}
 
@@ -786,7 +763,7 @@ func (t *Text) WalkDecorations(callback func(col color.RGBA, deco *Path)) {
 					xOffset := span.Face.mmPerEm * float64(span.Face.XOffset)
 					yOffset := span.Face.mmPerEm * float64(span.Face.YOffset)
 					p := decoSpan.deco.Decorate(decoSpan.face, decoSpan.width)
-					p = p.Translate(decoSpan.x+xOffset, -line.y+yOffset)
+					p = p.Translate(decoSpan.x+xOffset, -line.Y+yOffset)
 
 					foundColor := false
 					for j, col := range cs {
@@ -814,14 +791,14 @@ func (t *Text) WalkDecorations(callback func(col color.RGBA, deco *Path)) {
 
 // WalkSpans calls the callback for each text span per line.
 func (t *Text) WalkSpans(callback func(x, y float64, span TextSpan)) {
-	for _, line := range t.lines {
-		for _, span := range line.spans {
+	for _, line := range t.Lines {
+		for _, span := range line.Spans {
 			xOffset := span.Face.mmPerEm * float64(span.Face.XOffset)
 			yOffset := span.Face.mmPerEm * float64(span.Face.YOffset)
 			if t.Mode == HorizontalTB {
-				callback(span.x+xOffset, -line.y+yOffset, span)
+				callback(span.x+xOffset, -line.Y+yOffset, span)
 			} else {
-				callback(line.y+xOffset, -span.x+yOffset, span)
+				callback(line.Y+xOffset, -span.x+yOffset, span)
 			}
 		}
 	}
@@ -835,11 +812,11 @@ func (t *Text) RenderAsPath(r Renderer, m Matrix, resolution Resolution) {
 		r.RenderPath(p, style, m)
 	})
 
-	for _, line := range t.lines {
-		for _, span := range line.spans {
-			x, y := span.x, -line.y
+	for _, line := range t.Lines {
+		for _, span := range line.Spans {
+			x, y := span.x, -line.Y
 			if t.Mode != HorizontalTB {
-				x, y = line.y, -span.x
+				x, y = line.Y, -span.x
 			}
 
 			style := DefaultStyle
