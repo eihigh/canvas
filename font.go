@@ -620,10 +620,10 @@ func (face *FontFace) Decorate(width float64) *Path {
 func (face *FontFace) ToPath(s string) (*Path, float64, error) {
 	ppem := face.PPEM(DefaultResolution)
 	glyphs := face.Font.shaper.Shape(s, ppem, face.Direction, face.Script, face.Language, face.Font.features, face.Font.variations)
-	return face.toPath(glyphs, ppem)
+	return face.GlyphsToPath(glyphs, ppem)
 }
 
-func (face *FontFace) toPath(glyphs []text.Glyph, ppem uint16) (*Path, float64, error) {
+func (face *FontFace) GlyphsToPath(glyphs []text.Glyph, ppem uint16) (path *Path, advance float64, err error) {
 	p := &Path{}
 	x, y := face.XOffset, face.YOffset
 	for _, glyph := range glyphs {

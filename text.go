@@ -644,7 +644,7 @@ func (t *Text) OutlineBounds() Rect {
 	for _, line := range t.lines {
 		for _, span := range line.spans {
 			// TODO: vertical text
-			p, _, err := span.Face.toPath(span.Glyphs, span.Face.PPEM(DefaultResolution))
+			p, _, err := span.Face.GlyphsToPath(span.Glyphs, span.Face.PPEM(DefaultResolution))
 			if err != nil {
 				panic(err)
 			}
@@ -844,7 +844,7 @@ func (t *Text) RenderAsPath(r Renderer, m Matrix, resolution Resolution) {
 
 			style := DefaultStyle
 			style.FillColor = span.Face.Color
-			p, _, err := span.Face.toPath(span.Glyphs, span.Face.PPEM(resolution))
+			p, _, err := span.Face.GlyphsToPath(span.Glyphs, span.Face.PPEM(resolution))
 			if err != nil {
 				panic(err)
 			}
