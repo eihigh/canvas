@@ -22,7 +22,7 @@ Please see https://www.patreon.com/tdewolff for ways to contribute, otherwise pl
 This package has some additional features for the ebiten renderer, some removed features due to licensing issues or portability, and some minor changes.
 
 ### ebiten renderer
-Package `renderers/ebiten` is the new renderer. For more details, see the [API document](https://pkg.go.dev/github.com/eihigh/canvas/renderers/ebiten?tab=doc) and the [example](https://github.com/eihigh/canvas/tree/master/examples/ebiten).
+Package `renderers/ebiten` is the new renderer. For more details, see the [API document](https://pkg.go.dev/github.com/eihigh/canvas/renderers/ebiten?tab=doc) and the [example](https://github.com/eihigh/canvas/tree/ebiten/examples/ebiten).
 
 ### Removed features
 There are some removed features (below is the list) due to licensing issues or portability. Now all dependent libraries are MIT, BSD-3, or Apache2.0 licensed.
